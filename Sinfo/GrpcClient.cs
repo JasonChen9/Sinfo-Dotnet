@@ -84,7 +84,46 @@ namespace Sinfo
                         {
                             case > 1:
                                 //Surround nodes with "[]"
-                                groupName += "[" + string.Join(",", nodesInAGroup.ToArray()) + "]";
+                                //join Neighbor number 
+                                var joinArray = Array.Empty<string>();
+                                var joinIndex=0;
+                                
+                                //If the element "-" is in group, put the element "-" in the first position and move it into joinArray
+                                var nodeArray = nodesInAGroup.OrderBy(x=>x).ToArray();
+                                if (nodeArray[0] == "-")
+                                {
+                                    joinArray = joinArray.Concat(new [] {nodeArray[0]}).ToArray();
+                                    nodeArray = nodeArray.Skip(1).ToArray();
+                                    joinIndex++;
+                                }
+                                
+                                //sort array
+                                nodeArray = nodeArray.OrderBy(int.Parse).ToArray();
+                                
+                                //Determine whether the first number needs to be joined
+                                if (int.Parse(nodeArray[1])-int.Parse(nodeArray[0])==1)
+                                {
+                                    joinArray = joinArray.Concat(new [] {nodeArray[0]}).ToArray();
+                                }
+                                else
+                                {
+                                    joinArray = new string[] {nodeArray[0],nodeArray[1]};
+                                    joinIndex++;
+                                }
+                                
+                                //join Neighbor number and link with "-"
+                                for (var index = 1; index < nodeArray.Length-1; index++)
+                                {
+                                    if (int.Parse(nodeArray[index+1])-int.Parse(nodeArray[index])==1)
+                                        continue;
+                                    
+                                    joinArray[joinIndex++] += "-"+nodeArray[index];
+                                    joinArray = joinArray.Concat(new [] {nodeArray[index+1]}).ToArray();
+                                }
+                                joinArray[joinIndex] += "-" + nodeArray[^1];
+                                
+                                //separate joined numbers with "," 
+                                groupName += "[" + string.Join(",", joinArray) + "]";
                                 break;
                             case 1:
                             {
